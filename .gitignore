@@ -1,0 +1,34 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# バックアップファイル
+*.bak
+*.bak-*
+
+# ログファイル
+*.log
+
+# テスト用一時ファイル
+test-*.yaml
+*-test.yaml
+debug-*.yaml
+fix-*.yaml
+fixed-*.yaml
+simple-*.yaml
+direct-*.yaml
+retest.yaml
+pure-flow.yaml
+structured.yaml
+one-line-test.yaml
+mcp-*.yaml
+new-project.yaml
+absolute_*.yaml
+relative_*.yaml
+
+# その他
+.DS_Store
+.env
+.cursor/ 

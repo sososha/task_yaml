@@ -1,0 +1,30 @@
+tasks:
+  - id: d24e84e7-eb37-4b64-b5a4-d64f710c9c5d
+    title: テスト作業
+    status: in_progress
+    details:
+      description: タスク一覧のフォーマット修正
+      priority: HIGH
+      tags:
+        - format
+        - yaml
+  - id: b07e5860-5ff2-4d75-be9c-be8599cc7392
+    title: 詳細設計
+    status: in_progress
+    dependencies:
+      - d24e84e7-eb37-4b64-b5a4-d64f710c9c5d
+    details:
+      description: システムの詳細設計を行う
+      priority: MEDIUM
+      tags:
+        - design
+        - detailed
+  - id: b806cb22-7adb-43e2-be27-e09c68ab9309
+    title: 実装テスト
+    status: not_started
+    details:
+      description: 標準YAMLフォーマットでの実装テスト
+      priority: MEDIUM
+      tags:
+        - test
+        - implementation

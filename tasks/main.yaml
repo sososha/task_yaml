@@ -1,0 +1,46 @@
+tasks:
+- ❌ id: task-001  title: MCPデバッグ
+- ❌ id: task-58d9562a  title: Path Test: tasks/main.yaml
+- 🔄 id: 8c78913f-7996-4aa2-9199-1b250aabf205  title: テスト用タスク3
+- ❌ id: task-7880de16  title: Path Test: tasks/main.yaml
+- ❌ id: task-05bb6e2c  title: Path Test: tasks/main.yaml
+- 🔄 id: 243c59f9-932b-49af-8516-83e148dd9668  title: MCPサーバーのタスク保存形式を「1タスク1行」のフォーマットに修正する
+
+# タスク詳細
+details:
+  task-001:
+    description: MCPサーバーのデバッグ
+    priority: HIGH
+    startDate: 2024-03-14
+    tags:
+      - debug
+      - mcp
+  task-58d9562a:
+    description: このタスクは tasks/main.yaml パスでテストのために作成されました。
+    priority: LOW
+    tags:
+      - test
+      - path
+      - tasks-main-yaml
+  8c78913f-7996-4aa2-9199-1b250aabf205:
+    description: 更新されたタスクの説明です
+    priority: HIGH
+    comments:
+      - 作業を開始しました
+  task-7880de16:
+    description: このタスクは tasks/main.yaml パスでテストのために作成されました。
+    priority: LOW
+    tags:
+      - test
+      - path
+      - tasks-main-yaml
+  task-05bb6e2c:
+    description: このタスクは tasks/main.yaml パスでテストのために作成されました。
+    priority: LOW
+    tags:
+      - test
+      - path
+      - tasks-main-yaml
+  243c59f9-932b-49af-8516-83e148dd9668:
+    comments:
+      - 修正を実施しましたが、ビルド後のJavaScriptにservicesディレクトリが含まれておらず、修正が反映されていない可能性があります。引き続き調査が必要です。
