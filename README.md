@@ -1,27 +1,27 @@
 # YAML Task Management MCP Server
 
-YAMLベースのタスク管理システムを提供するModel Context Protocol (MCP) サーバーです。
+YAMLベースのタスク管理システムを提供するModel Context Protocol (MCP) サーバーです。標準的なYAML形式でタスクを管理できます。
 
 ## 機能
 
-- YAMLファイルを使用したタスク管理
-- 階層的なタスク構造のサポート
-- タスクの詳細情報（説明、優先度、依存関係など）
-- 進捗状況の追跡と可視化
-- プロジェクト分析による自動タスク生成
+- 標準YAML形式を使用したタスク管理
+- シンプルで直感的なタスク構造のサポート
+- タスクの詳細情報（説明、優先度、タグ、依存関係など）
+- 進捗状況の追跡と表示
 - MCPを通じたタスク管理機能の提供
 
 ## インストール
 
 ```bash
-# グローバルインストール（推奨）
-npm install -g yaml-task-mcp
+# リポジトリのクローン
+git clone https://github.com/sososha/task_yaml.git
+cd task_yaml
 
-# または、ローカルインストール
-git clone https://github.com/yourusername/yaml-task-mcp.git
-cd yaml-task-mcp
+# 依存パッケージのインストールとビルド
+cd mcp-server/yaml-task-mcp
 npm install
 npm run build
+cd ../..
 ```
 
 ## 使い方
@@ -29,52 +29,41 @@ npm run build
 ### サーバーの起動
 
 ```bash
-# グローバルインストールした場合
-yaml-task-mcp
+# 起動スクリプトを使用
+./start-yaml-task-mcp.sh
 
-# ローカルインストールした場合
-npm start
-
-# オプションでポート指定
-PORT=4000 yaml-task-mcp
+# または環境変数で設定を変更して起動
+PORT=4000 PROJECT_ROOT=/path/to/your/project TASK_PATH=/path/to/your/tasks ./start-yaml-task-mcp.sh
 ```
 
-デフォルトでは、サーバーはポート3000で起動します。
+デフォルトでは、サーバーはポート3999で起動します。
+
+### 環境設定
+
+`.env.yaml-task-mcp` ファイルで以下の設定ができます：
+
+```
+PROJECT_ROOT=/Users/yourusername/path/to/project
+TASK_PATH=/Users/yourusername/path/to/project/tasks
+PORT=3999
+DEBUG=true
+```
 
 ### Cursorエディタでの使用
 
 1. Cursorエディタをインストールします（https://cursor.sh/）
-2. 以下のいずれかの方法でMCP設定を行います：
-
-#### A. グローバルインストールの場合
-
-以下の内容で `~/.config/cursor/mcp.json` ファイルを作成します（Windowsの場合は `%APPDATA%\cursor\mcp.json`）：
+2. 以下の内容で `mcp.json` ファイルをプロジェクトルートに作成します：
 
 ```json
 {
   "mcpServers": {
     "yaml-task": {
-      "command": "npx",
-      "args": ["--yes", "yaml-task-mcp"],
-      "env": {}
-    }
-  }
-}
-```
-
-#### B. ローカルインストールの場合
-
-以下の内容で `~/.config/cursor/mcp.json` ファイルを作成します（パスは適宜変更してください）：
-
-```json
-{
-  "mcpServers": {
-    "yaml-task": {
-      "command": "node",
-      "args": ["dist/index.js"],
-      "cwd": "/path/to/yaml-task-mcp",
+      "command": "/bin/sh",
+      "args": ["start-yaml-task-mcp.sh"],
+      "cwd": "/path/to/task_yaml",
       "env": {
-        "PORT": "3000"
+        "PROJECT_ROOT": "${workspaceRoot}",
+        "TASK_PATH": "${workspaceRoot}/tasks"
       }
     }
   }
@@ -85,97 +74,78 @@ PORT=4000 yaml-task-mcp
 4. 以下のプロンプトでYAMLタスク管理を使用できます：
 
 ```
-@mcp yaml-task help
+@mcp yaml-task create-task {"title": "新しいタスク", "status": "not_started", "file": "tasks/main.yaml"}
 ```
 
-### 環境変数
+## タスク形式
 
-- `PORT`: サーバーのポート番号（デフォルト: 3000）
-- `TASK_CONFIG_PATH`: 設定ファイルのパス（デフォルト: `./.task-config.yaml`）
-
-### 設定ファイル
-
-`.task-config.yaml` ファイルで以下の設定ができます：
+タスクは標準YAML形式で管理され、次のような構造を持ちます：
 
 ```yaml
-port: 3000
-defaultTaskFile: tasks/main.yaml
-tasksDirectory: ./tasks
+tasks:
+  - id: "d24e84e7-eb37-4b64-b5a4-d64f710c9c5d"
+    title: "タスクの例"
+    status: "not_started"
+    details:
+      description: "タスクの説明をここに記述"
+      priority: "HIGH"
+      tags:
+        - "例"
+        - "タスク"
+  - id: "b07e5860-5ff2-4d75-be9c-be8599cc7392"
+    title: "別のタスク"
+    status: "in_progress"
+    dependencies:
+      - "d24e84e7-eb37-4b64-b5a4-d64f710c9c5d"
+    details:
+      description: "別のタスクの説明"
+      priority: "MEDIUM"
+      tags:
+        - "例"
+        - "別"
 ```
-
-## MCPリソース
-
-- `tasks://list?file=<ファイル名>`: タスクの一覧表示
-- `tasks://detail/{taskId}?file=<ファイル名>`: 特定のタスクの詳細表示
-- `tasks://report?file=<ファイル名>`: プロジェクトの進捗レポート
 
 ## MCPツール
 
 - `create-task`: 新しいタスクを作成
+  - パラメータ: title, status, file, parentId, details
+  
 - `update-task`: 既存のタスクを更新
-- `delete-task`: タスクを削除
-- `update-task-progress`: タスクの進捗状態を更新
-- `batch-update-tasks`: 複数のタスクを一括して更新
-- `initialize-task-environment`: タスク管理環境を初期化
-- `analyze-project-and-create-tasks`: プロジェクトを分析し、タスクを自動生成
-
-## MCPプロンプト
-
-- `create-task-guide`: タスク作成の使い方ガイド
-- `update-task-guide`: タスク更新の使い方ガイド
-- `update-task-progress-guide`: タスク進捗更新の使い方ガイド
-- `batch-update-tasks-guide`: タスク一括更新の使い方ガイド
-- `initialize-task-environment-guide`: タスク環境初期化の使い方ガイド
-- `analyze-project-guide`: プロジェクト分析の使い方ガイド
-- `help`: 全体のヘルプ表示
+  - パラメータ: id, title, status, file, parentId, details
 
 ## Cursorでの使用例
 
 ```
-# タスク一覧を表示
-@mcp yaml-task tasks://list?file=tasks/main.yaml
-
-# タスク作成ガイドを表示
-@mcp yaml-task create-task-guide
-
 # 新しいタスクを作成
 @mcp yaml-task create-task {
   "title": "設計書を作成する",
   "status": "not_started",
+  "file": "tasks/main.yaml",
   "details": {
     "description": "プロジェクトの設計書を作成する",
-    "priority": "HIGH"
+    "priority": "HIGH",
+    "tags": ["設計", "ドキュメント"]
   }
 }
 
-# プロジェクト分析を実行
-@mcp yaml-task analyze-project-and-create-tasks {
-  "projectPath": "./src",
-  "outputFile": "tasks/project-analysis.yaml"
+# タスクを更新
+@mcp yaml-task update-task {
+  "id": "d24e84e7-eb37-4b64-b5a4-d64f710c9c5d",
+  "status": "in_progress",
+  "file": "tasks/main.yaml"
 }
 ```
 
-## ディレクトリ構造
+## 対応タスクステータス
 
-```
-yaml-task-mcp/
-├── src/
-│   ├── models/        # データモデル定義
-│   ├── services/      # ビジネスロジック
-│   ├── resources/     # MCPリソース
-│   ├── tools/         # MCPツール
-│   ├── prompts/       # MCPプロンプト
-│   ├── types/         # 型定義
-│   └── index.ts       # エントリーポイント
-├── examples/          # 設定例
-│   ├── cursor-mcp.json        # Cursor用MCP設定
-│   └── cursor-local-mcp.json  # ローカル開発用設定
-├── tasks/             # タスクファイル保存ディレクトリ
-├── tsconfig.json      # TypeScript設定
-├── package.json       # プロジェクト設定
-└── README.md          # このファイル
-```
+- `not_started`: 未着手
+- `in_progress`: 進行中
+- `review`: レビュー中
+- `done`: 完了
+- `completed`: 完全に完了
+- `blocked`: ブロック中
+- `cancelled`: キャンセル
 
 ## ライセンス
 
-ISC 
+MIT 
