@@ -31,4 +31,5 @@ relative_*.yaml
 # その他
 .DS_Store
 .env
-.cursor/ 
+.cursor/mcp.json
+# .cursor/ ディレクトリは example ファイルのために追跡します 

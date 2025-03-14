@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "yaml-task": {
+      "command": "yaml-task-mcp",
+      "env": {
+        "PROJECT_ROOT": "${workspaceRoot}",
+        "TASK_PATH": "${workspaceRoot}/tasks",
+        "PORT": "3999",
+        "DEBUG": "false"
+      }
+    }
+  }
+} 

@@ -12,6 +12,20 @@ YAMLベースのタスク管理システムを提供するModel Context Protocol
 
 ## インストール
 
+### 方法1: NPMからリポジトリを直接インストール（推奨）
+
+```bash
+# グローバルインストール（どこからでもコマンドとして使用可能）
+npm install -g git+https://github.com/sososha/task_yaml.git
+
+# または特定のプロジェクト内にインストール
+npm install git+https://github.com/sososha/task_yaml.git
+```
+
+インストール後、`yaml-task-mcp`コマンドが使用可能になります。また、自動的にCursor用の設定ファイルが生成されます。
+
+### 方法2: リポジトリをクローンしてセットアップ
+
 ```bash
 # リポジトリのクローン
 git clone https://github.com/sososha/task_yaml.git
@@ -27,6 +41,18 @@ cd ../..
 ## 使い方
 
 ### サーバーの起動
+
+#### NPMインストール済みの場合
+
+```bash
+# コマンド一つで起動
+yaml-task-mcp
+
+# または環境変数で設定を変更して起動
+PORT=4000 PROJECT_ROOT=/path/to/your/project TASK_PATH=/path/to/your/tasks yaml-task-mcp
+```
+
+#### リポジトリをクローンした場合
 
 ```bash
 # 起動スクリプトを使用
@@ -52,7 +78,36 @@ DEBUG=true
 ### Cursorエディタでの使用
 
 1. Cursorエディタをインストールします（https://cursor.sh/）
-2. 以下の内容で `mcp.json` ファイルをプロジェクトルートに作成します：
+
+2. 以下のいずれかの方法でMCP設定を行います：
+
+#### 方法A: NPMでインストールした場合（自動設定）
+
+NPMでインストールした場合、プロジェクトのルートに`mcp.json`が自動生成されます。もし生成されない場合は、手動で作成してください。
+
+#### 方法B: .cursor/mcp.jsonを使用する場合
+
+プロジェクト内に`.cursor`ディレクトリを作成し、その中に`mcp.json`ファイルを作成します：
+
+```json
+{
+  "mcpServers": {
+    "yaml-task": {
+      "command": "yaml-task-mcp",
+      "env": {
+        "PROJECT_ROOT": "${workspaceRoot}",
+        "TASK_PATH": "${workspaceRoot}/tasks",
+        "PORT": "3999",
+        "DEBUG": "false"
+      }
+    }
+  }
+}
+```
+
+#### 方法C: リポジトリをクローンした場合
+
+プロジェクトルートに`mcp.json`ファイルを作成します：
 
 ```json
 {
@@ -71,6 +126,7 @@ DEBUG=true
 ```
 
 3. Cursorエディタを再起動します
+
 4. 以下のプロンプトでYAMLタスク管理を使用できます：
 
 ```

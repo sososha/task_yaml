@@ -28,42 +28,86 @@ try {
   console.warn('実行権限の付与に失敗しましたが、処理を続行します:', error.message);
 }
 
-// MCP設定ファイルのサンプルを作成
+// MCP設定用のJSONを生成
+const mcpConfig = {
+  "command": "yaml-task-mcp",
+  "env": {
+    "PROJECT_ROOT": "${workspaceRoot}",
+    "TASK_PATH": "${workspaceRoot}/tasks",
+    "PORT": "3999",
+    "DEBUG": "false"
+  }
+};
+
+// MCP設定ファイルのサンプルを作成（プロジェクトルート）
 try {
   const mcpJsonPath = path.resolve(userDir, 'mcp.json');
   
   // 既存のファイルがあるか確認
-  let mcpConfig = { mcpServers: {} };
+  let mcpRootConfig = { mcpServers: {} };
   
   if (fs.existsSync(mcpJsonPath)) {
     try {
       const existingContent = fs.readFileSync(mcpJsonPath, 'utf8');
-      mcpConfig = JSON.parse(existingContent);
+      mcpRootConfig = JSON.parse(existingContent);
     } catch (e) {
       console.warn('既存のmcp.jsonの解析に失敗しました。新しく作成します。');
     }
   }
   
   // yaml-taskの設定を追加
-  mcpConfig.mcpServers = mcpConfig.mcpServers || {};
+  mcpRootConfig.mcpServers = mcpRootConfig.mcpServers || {};
   
-  if (!mcpConfig.mcpServers['yaml-task']) {
-    mcpConfig.mcpServers['yaml-task'] = {
-      "command": "yaml-task-mcp",
-      "env": {
-        "PROJECT_ROOT": "${workspaceRoot}",
-        "TASK_PATH": "${workspaceRoot}/tasks"
-      }
-    };
+  if (!mcpRootConfig.mcpServers['yaml-task']) {
+    mcpRootConfig.mcpServers['yaml-task'] = mcpConfig;
     
     // ファイルを書き出し
-    fs.writeFileSync(mcpJsonPath, JSON.stringify(mcpConfig, null, 2), 'utf8');
+    fs.writeFileSync(mcpJsonPath, JSON.stringify(mcpRootConfig, null, 2), 'utf8');
     console.log(`mcp.jsonを作成しました: ${mcpJsonPath}`);
   } else {
     console.log('mcp.jsonにyaml-task設定が既に存在します。スキップします。');
   }
 } catch (error) {
   console.error('mcp.jsonの作成中にエラーが発生しました:', error);
+}
+
+// .cursor/mcp.jsonの作成
+try {
+  const cursorDir = path.resolve(userDir, '.cursor');
+  const cursorMcpJsonPath = path.resolve(cursorDir, 'mcp.json');
+  
+  // .cursorディレクトリが存在しない場合は作成
+  if (!fs.existsSync(cursorDir)) {
+    fs.mkdirSync(cursorDir, { recursive: true });
+    console.log('.cursorディレクトリを作成しました。');
+  }
+  
+  // 既存のファイルがあるか確認
+  let mcpCursorConfig = { mcpServers: {} };
+  
+  if (fs.existsSync(cursorMcpJsonPath)) {
+    try {
+      const existingContent = fs.readFileSync(cursorMcpJsonPath, 'utf8');
+      mcpCursorConfig = JSON.parse(existingContent);
+    } catch (e) {
+      console.warn('既存の.cursor/mcp.jsonの解析に失敗しました。新しく作成します。');
+    }
+  }
+  
+  // yaml-taskの設定を追加
+  mcpCursorConfig.mcpServers = mcpCursorConfig.mcpServers || {};
+  
+  if (!mcpCursorConfig.mcpServers['yaml-task']) {
+    mcpCursorConfig.mcpServers['yaml-task'] = mcpConfig;
+    
+    // ファイルを書き出し
+    fs.writeFileSync(cursorMcpJsonPath, JSON.stringify(mcpCursorConfig, null, 2), 'utf8');
+    console.log(`.cursor/mcp.jsonを作成しました: ${cursorMcpJsonPath}`);
+  } else {
+    console.log('.cursor/mcp.jsonにyaml-task設定が既に存在します。スキップします。');
+  }
+} catch (error) {
+  console.error('.cursor/mcp.jsonの作成中にエラーが発生しました:', error);
 }
 
 console.log('YAML Task MCP のセットアップが完了しました！');
