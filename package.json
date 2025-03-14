@@ -1,12 +1,17 @@
 {
-  "name": "yaml-task-manager",
+  "name": "yaml-task-mcp",
   "version": "1.0.0",
-  "description": "YAMLファイルを使用したタスク管理ツール",
+  "description": "YAMLファイルを使用したタスク管理ツール - MCP対応",
   "type": "module",
-  "main": "task-manager.js",
+  "main": "mcp-server/yaml-task-mcp/dist/index.js",
+  "bin": {
+    "yaml-task-mcp": "./bin/yaml-task-mcp.js"
+  },
   "scripts": {
-    "start": "node task-manager.js",
-    "test": "node test-create-path-task.js"
+    "start": "node mcp-server/yaml-task-mcp/dist/index.js",
+    "test": "node test-create-path-task.js",
+    "install": "cd mcp-server/yaml-task-mcp && npm install && npm run build",
+    "postinstall": "node bin/create-config.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0",
@@ -14,5 +19,21 @@
     "js-yaml": "^4.1.0",
     "uuid": "^9.0.1",
     "yargs": "^17.7.2"
-  }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sososha/task_yaml.git"
+  },
+  "keywords": [
+    "yaml",
+    "task",
+    "mcp",
+    "cursor",
+    "management"
+  ],
+  "author": "",
+  "license": "MIT"
 }
